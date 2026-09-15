@@ -82,7 +82,7 @@ or `gh issue list --search "SCHED-005"`.
 ## Review workflow
 PRs should not be merged the same-day they are created. Instead, they are to be left hanging until the next day and must be reviewed using the following workflow.
 
-Branch per ticket --> Development --> Human cold self-review --> AI does a review via the `.claude/commands/review-*.md` commands in a fresh session --> Claude leaves findings as PR comments --> Human addresses comments, if needed and does another AI review --> run `.claude/commands/debrief.md` to verify understanding before merging --> merge when findings are all addressed and the debrief passes. 
+Branch per ticket --> Development --> `.claude/commands/open-pr.md` opens the PR and posts a What-was-built/Verified/Surprises write-up --> Human cold self-review next day --> AI does a review via the `.claude/commands/review-*.md` commands in a fresh session --> Claude leaves findings as PR comments --> Human addresses comments, if needed and does another AI review --> run `.claude/commands/debrief.md` to verify understanding before merging --> merge when findings are all addressed and the debrief passes. 
 
 ## Definition of Done
 A PR is done when, per the Review Workflow above:
