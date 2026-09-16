@@ -1,0 +1,16 @@
+{
+    "name": "@saop/schema",
+    "type": "module",
+    "private": true,
+    "main": "src/index.ts",
+    "scripts": {
+        "build:schema": "tsx src/build-json-schema.ts"
+    },
+    "dependencies": {
+        "zod": "^4.6.5"
+    },
+    "devDependencies": {
+        "tsx": "^4.23.13",
+        "typescript": "^7.0.2"
+    }
+}
