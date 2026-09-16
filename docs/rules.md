@@ -1,7 +1,7 @@
 # Scheduling Rules — Source of Truth
 
 Status: DRAFT
-Last updated: 2026-09-10
+Last updated: 2026-09-15
 
 This document is the single source of truth for elective scheduling rules.
 Solver code and tests reference rules by ID (H1, H2… / S1, S2…). No schema
@@ -28,7 +28,7 @@ or code decisions here — prose only.
 
 | ID | Rule | Notes |
 |----|------|-------|
-| H1 | Every student is scheduled into exactly 4 elective slots per year, 2 electives a semester. | Edge case: some electives are year long |
+| H1 | Every student is scheduled into exactly 8 elective slots per year, 4 electives a semester. | Edge case: some electives are year long |
 | H2 | Grade-specific required electives must be assigned to all students in that grade | Example: Life of a Dolphin for every 6th grader. |
 | H3 | A class cannot exceed its room's capacity | |
 | H4 | Specialty classes (band, music, tech) can only be scheduled in their matching specialty room | |
@@ -42,6 +42,9 @@ or code decisions here — prose only.
 | H12 | Spanish requirements. | TODO: clarify what these requirements are |
 | H13 | Some students are required to take specific classes. Example: some students are required to take Skill Builders | |
 | H14 | Specific classes have prerequisites that are not based on previous classes/grade level/etc but rather overall integrity/behavior | Q: how do we choose which students should go into electives like service.|
+| H15 | Most electives have only one section per semester, the exceptions are very few (ex: Life of a Dolphin, Technology 101, PE) | TODO: clarify with admin which electives have multiple sections. |
+| H16 | 8th graders who have not yet taken Spanish 1 (a year long elective) must be enrolled in Spanish 1. | |
+| H17 | If a student is enrolled in a semester long elective in one semester, they must also be enrolled in a semester long elective in the next semester. | |
 
 ---
 
