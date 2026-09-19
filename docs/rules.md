@@ -41,7 +41,7 @@ Each student's slots are filled form two **disjointed** sources:
 | H4 | Specialty classes (band, music, tech) can only be scheduled in their matching specialty room | |
 | H5 | A teacher cannot be double-booked across two classes in the same period | |
 | H6 | A room cannot be double-booked across two classes in the same period | |
-| H7 | General-purpose/teacher classrooms must be available for at least one of the two elective blocks for a planning period. | |
+| H7 | General-purpose/teacher classrooms must be available for at least one of the two elective blocks for a planning period. **SUPERSEDED** by H23 | ID retained, do not reuse, reference H23|
 | H8 | A student cannot be double-booked across two classes in the same period | |
 | H9 | Students cannot take electives they have already taken | TODO: verify with Veronica this is a rule |
 | H10 | Teachers may only teach electives for which they are listed as eligible. Eligibility is an explicit per-elective set of teachers (`eligibleTeacherIds`), pool size >= 1 - a single-teacher elective (band, art, PE) is just a pool of one; a department-taught elective (e.g. Life of a Dolphin) is a larger pool. | TODO: verify with Veronica, band teachers should prioritize band, but what about general elective teachers?| Hard rail of *who may* teach. The soft preference of *who ideally* teaches (specialists prioritizing their specialty) is S6. Separate from H4 (specialty room) — band is constrained on both, independently. |
@@ -57,6 +57,7 @@ Each student's slots are filled form two **disjointed** sources:
 | H20 | Students cannot be enrolled in classes that they are not eligible for | |
 | H21 | In addition to H19, 6th graders must also take an elective categorized as `Fine Arts` | Fine Arts electives live int he ranked pool (not a choose-one pick like PE), so the solver must hard-guarantee each 6th grader gets at least one Fine Arts elective from their ranked choices - ooverrided pure preference order.| 
 | H22 | A few electives are restricted to specific semester(s); their sections may only be scheduled in the allowed semeseter | Rare. Modeled as an optional `allowedSemesters` on the elective - absent means any semester. Does not apply to year-long electives.
+| H23 | Classrooms marked as `General Classroom` must be open for at least one of the block position slots on both ElectiveDay types. | |
 
 ---
 

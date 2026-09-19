@@ -7,7 +7,7 @@ export const Elective = z.object({
     eligibleTeacherIds: z.array(z.number().int().positive()).min(1), // H10
     electiveType: z.enum(ElectiveType), // H19, H21
     isYearLong: z.boolean(), // H17
-    eligibleGradeLevels: z.array(z.enum(Grade)),
+    eligibleGradeLevels: z.array(z.enum(Grade)).min(1),
     eligibleStudentIds: z.array(z.number().int().positive()).min(1).optional(), // H14, H20
     allowedSemesters: z.array(z.enum(Semester)).min(1).optional(), // H22
     requiredClassroomType: z.enum(RoomType).optional() // H4

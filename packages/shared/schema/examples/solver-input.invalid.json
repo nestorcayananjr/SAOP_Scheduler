@@ -11,14 +11,14 @@
     { "id": 4, "roomNumber": 202, "type": "Art", "capacity": 22 }
   ],
   "blocks": [
-    { "id": 1, "semester": "Fall",   "ordering": 1, "days": "Blue Day Mon/Thurs" },
-    { "id": 2, "semester": "Fall",   "ordering": 2, "days": "Blue Day Mon/Thurs" },
-    { "id": 3, "semester": "Fall",   "ordering": 1, "days": "Green Day Tue/Fri" },
-    { "id": 4, "semester": "Fall",   "ordering": 2, "days": "Green Day Tue/Fri" },
-    { "id": 5, "semester": "Spring", "ordering": 1, "days": "Blue Day Mon/Thurs" },
-    { "id": 6, "semester": "Spring", "ordering": 2, "days": "Blue Day Mon/Thurs" },
-    { "id": 7, "semester": "Spring", "ordering": 1, "days": "Green Day Tue/Fri" },
-    { "id": 8, "semester": "Spring", "ordering": 2, "days": "Green Day Tue/Fri" }
+    { "id": 1, "semester": "Fall",   "blockPosition": "first", "days": "Blue Day Mon/Thurs" },
+    { "id": 2, "semester": "Fall",   "blockPosition": "second", "days": "Blue Day Mon/Thurs" },
+    { "id": 3, "semester": "Fall",   "blockPosition": "first", "days": "Green Day Tue/Fri" },
+    { "id": 4, "semester": "Fall",   "blockPosition": "second", "days": "Green Day Tue/Fri" },
+    { "id": 5, "semester": "Spring", "blockPosition": "first", "days": "Blue Day Mon/Thurs" },
+    { "id": 6, "semester": "Spring", "blockPosition": "second", "days": "Blue Day Mon/Thurs" },
+    { "id": 7, "semester": "Spring", "blockPosition": "first", "days": "Green Day Tue/Fri" },
+    { "id": 8, "semester": "Spring", "blockPosition": "second", "days": "Green Day Tue/Fri" }
   ],
   "electives": [
     {
