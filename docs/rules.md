@@ -49,7 +49,7 @@ Each student's slots are filled form two **disjointed** sources:
 | H12 | Spanish requirements. **SUPERSEDED** by H16 (1 year of Spanish must be taken before they graduate, therefore 8th graders who haven't taken Spanish 1 must take it) | ID retained, do not reuse, reference H16|
 | H13 | Some students are required to take specific classes. Example: some students are required to take Skill Builders | |
 | H14 | Specific classes have prerequisites that are not based on previous classes/grade level/etc but rather overall integrity/behavior | Q: how do we choose which students should go into electives like service.| This is modeled as an optional `eligibleStudentIds` allowlist on the elective entity |
-| H15 | Most electives have only one section per semester, the exceptions are very few (ex: Life of a Dolphin, Technology 101, PE) | TODO: clarify with admin which electives have multiple sections. |
+| H15 | Each elective defaults to a single section; only electives explicitly flagged (`allowsMultipleSections`) may have more.| TODO: clarify with admin which electives have multiple sections. |
 | H16 | 8th graders who have not yet taken Spanish 1 (a year long elective) must be enrolled in Spanish 1. | |
 | H17 | If a student is enrolled in a semester long elective in one semester, they must also be enrolled in a semester long elective in the next semester. | |
 | H18 | Most classes only have 1 teacher assigned, however some classes have 2 teachers assigned (ex: Broadcast Media) | Verify if any other classes have 2 teachers assigned |

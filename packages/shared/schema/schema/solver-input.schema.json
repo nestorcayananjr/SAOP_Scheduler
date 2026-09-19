@@ -129,6 +129,26 @@
               "Computer Lab",
               "General Classroom"
             ]
+          },
+          "requiredTeacherCount": {
+            "default": 1,
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991
+          },
+          "allowsMultipleSections": {
+            "default": false,
+            "type": "boolean"
+          },
+          "minSectionSize": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991
+          },
+          "maxSectionSize": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991
           }
         },
         "required": [
@@ -137,7 +157,9 @@
           "eligibleTeacherIds",
           "electiveType",
           "isYearLong",
-          "eligibleGradeLevels"
+          "eligibleGradeLevels",
+          "requiredTeacherCount",
+          "allowsMultipleSections"
         ],
         "additionalProperties": false
       }
