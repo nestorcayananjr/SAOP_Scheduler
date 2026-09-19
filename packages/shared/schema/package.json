@@ -4,12 +4,14 @@
     "private": true,
     "main": "src/index.ts",
     "scripts": {
-        "build:schema": "tsx src/build-json-schema.ts"
+        "build:schema": "tsx src/scripts/export-json-schema.ts",
+        "check:examples": "tsx src/scripts/check-examples.ts"
     },
     "dependencies": {
         "zod": "^4.6.5"
     },
     "devDependencies": {
+        "@types/node": "^26.6.1",
         "tsx": "^4.23.13",
         "typescript": "^7.0.2"
     }

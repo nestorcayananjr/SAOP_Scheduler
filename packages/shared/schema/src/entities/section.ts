@@ -1,5 +1,6 @@
 import * as z from "zod"
 
+// solver OUTPUT - never appears in SolverInput
 export const Section = z.object({
     id: z.number().int().positive(),
     electiveId: z.number().int().positive(),

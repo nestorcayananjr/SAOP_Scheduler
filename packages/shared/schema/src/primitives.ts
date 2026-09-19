@@ -19,8 +19,8 @@ export enum Grade {
 }
 
 export enum Ordering {
-    "first" = 1,
-    "second"
+    First = "first",
+    Second = "second"
 }
 
 export enum ElectiveType {

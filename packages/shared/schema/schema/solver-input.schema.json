@@ -1,0 +1,400 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "students": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "grade": {
+            "type": "string",
+            "enum": [
+              "6th",
+              "7th",
+              "8th"
+            ]
+          },
+          "takenElectiveIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991
+            }
+          },
+          "requiredElectiveIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991
+            }
+          }
+        },
+        "required": [
+          "id",
+          "firstName",
+          "lastName",
+          "grade",
+          "takenElectiveIds",
+          "requiredElectiveIds"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "electives": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991
+          },
+          "name": {
+            "type": "string"
+          },
+          "eligibleTeacherIds": {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991
+            }
+          },
+          "electiveType": {
+            "type": "string",
+            "enum": [
+              "Physical Education",
+              "Fine Arts",
+              "General"
+            ]
+          },
+          "isYearLong": {
+            "type": "boolean"
+          },
+          "eligibleGradeLevels": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "6th",
+                "7th",
+                "8th"
+              ]
+            }
+          },
+          "eligibleStudentIds": {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991
+            }
+          },
+          "allowedSemesters": {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "Fall",
+                "Spring"
+              ]
+            }
+          },
+          "requiredClassroomType": {
+            "type": "string",
+            "enum": [
+              "Band",
+              "Art",
+              "PE",
+              "Spanish",
+              "Computer Lab",
+              "General Classroom"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "eligibleTeacherIds",
+          "electiveType",
+          "isYearLong",
+          "eligibleGradeLevels"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "teachers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "blocks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991
+          },
+          "semester": {
+            "type": "string",
+            "enum": [
+              "Fall",
+              "Spring"
+            ]
+          },
+          "ordering": {
+            "type": "string",
+            "enum": [
+              "first",
+              "second"
+            ]
+          },
+          "days": {
+            "type": "string",
+            "enum": [
+              "Blue Day Mon/Thurs",
+              "Green Day Tue/Fri"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "semester",
+          "ordering",
+          "days"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "rooms": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991
+          },
+          "roomNumber": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "Band",
+              "Art",
+              "PE",
+              "Spanish",
+              "Computer Lab",
+              "General Classroom"
+            ]
+          },
+          "capacity": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991
+          }
+        },
+        "required": [
+          "id",
+          "roomNumber",
+          "type",
+          "capacity"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "combinableGroups": {
+      "default": [],
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991
+          },
+          "electiveIds": {
+            "minItems": 2,
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991
+            }
+          }
+        },
+        "required": [
+          "id",
+          "electiveIds"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "preferences": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "studentId": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991
+          },
+          "rankedElectiveIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991
+            }
+          }
+        },
+        "required": [
+          "studentId",
+          "rankedElectiveIds"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "config": {
+      "type": "object",
+      "properties": {
+        "weights": {
+          "type": "object",
+          "properties": {
+            "S1": {
+              "type": "number",
+              "minimum": 0
+            },
+            "S2": {
+              "type": "number",
+              "minimum": 0
+            },
+            "S3": {
+              "type": "number",
+              "minimum": 0
+            },
+            "S4": {
+              "type": "number",
+              "minimum": 0
+            },
+            "S5": {
+              "type": "number",
+              "minimum": 0
+            },
+            "S6": {
+              "type": "number",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "S1",
+            "S2",
+            "S3",
+            "S4",
+            "S5",
+            "S6"
+          ],
+          "additionalProperties": false
+        },
+        "timeLimitSeconds": {
+          "type": "integer",
+          "exclusiveMinimum": 0,
+          "maximum": 9007199254740991
+        },
+        "randomSeed": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "weights"
+      ],
+      "additionalProperties": false
+    },
+    "lockedAssignments": {
+      "default": [],
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "studentId": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991
+          },
+          "electiveId": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991
+          },
+          "blockId": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991
+          }
+        },
+        "required": [
+          "studentId",
+          "electiveId"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "students",
+    "electives",
+    "teachers",
+    "blocks",
+    "rooms",
+    "combinableGroups",
+    "preferences",
+    "config",
+    "lockedAssignments"
+  ],
+  "additionalProperties": false
+}

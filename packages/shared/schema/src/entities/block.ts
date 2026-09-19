@@ -6,6 +6,7 @@ import { Semester, Ordering, ElectiveDay } from "../primitives.js"
 export const Block = z.object({
     id: z.number().int().positive(),
     semester: z.enum(Semester),
-    ordering: z.enum(Ordering),
+    // each school day has two blocks for electives
+    blockPosition: z.enum(Ordering),
     days: z.enum(ElectiveDay)
 })

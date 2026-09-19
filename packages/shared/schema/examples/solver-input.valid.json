@@ -1,0 +1,166 @@
+{
+  "teachers": [
+    { "id": 1, "name": "Ms. Rivera" },
+    { "id": 2, "name": "Mr. Chen" },
+    { "id": 3, "name": "Coach Diaz" }
+  ],
+  "rooms": [
+    { "id": 1, "roomNumber": 101, "type": "General Classroom", "capacity": 25 },
+    { "id": 2, "roomNumber": 102, "type": "General Classroom", "capacity": 25 },
+    { "id": 3, "roomNumber": 201, "type": "PE", "capacity": 40 },
+    { "id": 4, "roomNumber": 202, "type": "Art", "capacity": 22 }
+  ],
+  "blocks": [
+    { "id": 1, "semester": "Fall",   "ordering": 1, "days": "Blue Day Mon/Thurs" },
+    { "id": 2, "semester": "Fall",   "ordering": 2, "days": "Blue Day Mon/Thurs" },
+    { "id": 3, "semester": "Fall",   "ordering": 1, "days": "Green Day Tue/Fri" },
+    { "id": 4, "semester": "Fall",   "ordering": 2, "days": "Green Day Tue/Fri" },
+    { "id": 5, "semester": "Spring", "ordering": 1, "days": "Blue Day Mon/Thurs" },
+    { "id": 6, "semester": "Spring", "ordering": 2, "days": "Blue Day Mon/Thurs" },
+    { "id": 7, "semester": "Spring", "ordering": 1, "days": "Green Day Tue/Fri" },
+    { "id": 8, "semester": "Spring", "ordering": 2, "days": "Green Day Tue/Fri" }
+  ],
+  "electives": [
+    {
+      "id": 1,
+      "name": "Physical Education",
+      "eligibleTeacherIds": [3],
+      "electiveType": "Physical Education",
+      "isYearLong": false,
+      "eligibleGradeLevels": ["6th", "7th", "8th"]
+    },
+    {
+      "id": 2,
+      "name": "Taekwondo",
+      "eligibleTeacherIds": [3],
+      "electiveType": "Physical Education",
+      "isYearLong": false,
+      "eligibleGradeLevels": ["6th", "7th", "8th"]
+    },
+    {
+      "id": 3,
+      "name": "Catholic Art",
+      "eligibleTeacherIds": [1],
+      "electiveType": "Fine Arts",
+      "isYearLong": false,
+      "eligibleGradeLevels": ["6th", "7th", "8th"]
+    },
+    {
+      "id": 4,
+      "name": "Broadcast Media",
+      "eligibleTeacherIds": [2, 1],
+      "electiveType": "General",
+      "isYearLong": false,
+      "eligibleGradeLevels": ["7th", "8th"],
+      "eligibleStudentIds": [3, 4]
+    },
+    {
+      "id": 5,
+      "name": "Spanish 1",
+      "eligibleTeacherIds": [1],
+      "electiveType": "General",
+      "isYearLong": true,
+      "eligibleGradeLevels": ["8th"]
+    },
+    {
+      "id": 6,
+      "name": "Yearbook",
+      "eligibleTeacherIds": [2],
+      "electiveType": "General",
+      "isYearLong": false,
+      "eligibleGradeLevels": ["7th", "8th"],
+      "allowedSemesters": ["Spring"]
+    },
+    {
+      "id": 7,
+      "name": "Chess Club",
+      "eligibleTeacherIds": [1, 2],
+      "electiveType": "General",
+      "isYearLong": false,
+      "eligibleGradeLevels": ["6th", "7th", "8th"]
+    },
+    {
+      "id": 8,
+      "name": "Board Games",
+      "eligibleTeacherIds": [2],
+      "electiveType": "General",
+      "isYearLong": false,
+      "eligibleGradeLevels": ["6th", "7th", "8th"]
+    },
+    {
+      "id": 9,
+      "name": "Skill Builders",
+      "eligibleTeacherIds": [3],
+      "electiveType": "General",
+      "isYearLong": false,
+      "eligibleGradeLevels": ["6th", "7th", "8th"]
+    }
+  ],
+  "students": [
+    {
+      "id": 1,
+      "firstName": "Emma",
+      "lastName": "Johnson",
+      "grade": "6th",
+      "takenElectiveIds": [],
+      "requiredElectiveIds": [1]
+    },
+    {
+      "id": 2,
+      "firstName": "Liam",
+      "lastName": "Smith",
+      "grade": "7th",
+      "takenElectiveIds": [7],
+      "requiredElectiveIds": [2]
+    },
+    {
+      "id": 3,
+      "firstName": "Olivia",
+      "lastName": "Brown",
+      "grade": "8th",
+      "takenElectiveIds": [],
+      "requiredElectiveIds": [5, 1]
+    },
+    {
+      "id": 4,
+      "firstName": "Noah",
+      "lastName": "Davis",
+      "grade": "8th",
+      "takenElectiveIds": [3],
+      "requiredElectiveIds": [5, 2]
+    },
+    {
+      "id": 5,
+      "firstName": "Ava",
+      "lastName": "Wilson",
+      "grade": "7th",
+      "takenElectiveIds": [],
+      "requiredElectiveIds": [1, 9]
+    }
+  ],
+  "preferences": [
+    { "studentId": 1, "rankedElectiveIds": [7, 3, 8] },
+    { "studentId": 2, "rankedElectiveIds": [6, 3, 8] },
+    { "studentId": 3, "rankedElectiveIds": [4, 7, 3, 8, 6] },
+    { "studentId": 4, "rankedElectiveIds": [4, 8, 7, 6] },
+    { "studentId": 5, "rankedElectiveIds": [7, 3, 8, 6] }
+  ],
+  "combinableGroups": [
+    { "id": 1, "electiveIds": [7, 8] }
+  ],
+  "lockedAssignments": [
+    { "studentId": 3, "electiveId": 4, "blockId": 3 }
+  ],
+  "config": {
+    "weights": {
+      "S1": 10,
+      "S2": 3,
+      "S3": 3,
+      "S4": 8,
+      "S5": 4,
+      "S6": 3
+    },
+    "timeLimitSeconds": 60,
+    "randomSeed": 42
+  }
+}
