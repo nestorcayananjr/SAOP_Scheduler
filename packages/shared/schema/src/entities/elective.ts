@@ -4,13 +4,13 @@ import { Grade, Semester, ElectiveType, RoomType } from "../primitives.js"
 export const Elective = z.object({
     id: z.number().int().positive(),
     name: z.string(),
-    eligibleTeacherIds: z.array(z.number().int().positive()).min(1),
-    electiveType: z.enum(ElectiveType),
-    isYearLong: z.boolean(),
+    eligibleTeacherIds: z.array(z.number().int().positive()).min(1), // H10
+    electiveType: z.enum(ElectiveType), // H19, H21
+    isYearLong: z.boolean(), // H17
     eligibleGradeLevels: z.array(z.enum(Grade)),
-    eligibleStudentIds: z.array(z.number().int().positive()).min(1).optional(),
-    allowedSemesters: z.array(z.enum(Semester)).min(1).optional(),
-    requiredClassroomType: z.enum(RoomType).optional()
+    eligibleStudentIds: z.array(z.number().int().positive()).min(1).optional(), // H14, H20
+    allowedSemesters: z.array(z.enum(Semester)).min(1).optional(), // H22
+    requiredClassroomType: z.enum(RoomType).optional() // H4
 }).refine((e) => 
     !(e.isYearLong && e.allowedSemesters), {
         error: "year-long electives cannot also restrict allowedSemesters"

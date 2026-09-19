@@ -18,7 +18,7 @@ export enum Grade {
     "8th" = "8th"
 }
 
-export enum Ordering {
+export enum BlockPosition {
     First = "first",
     Second = "second"
 }

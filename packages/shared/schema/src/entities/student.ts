@@ -6,7 +6,6 @@ export const Student = z.object({
     firstName: z.string(),
     lastName: z.string(),
     grade: z.enum(Grade),
-    takenElectiveIds: z.array(z.number().int().positive()),
-    requiredElectiveIds: z.array(z.number().int().positive()),
-
+    takenElectiveIds: z.array(z.number().int().positive()), // H9
+    requiredElectiveIds: z.array(z.number().int().positive()), // H2, H13, H16, H19
 })

@@ -179,7 +179,7 @@
               "Spring"
             ]
           },
-          "ordering": {
+          "blockPosition": {
             "type": "string",
             "enum": [
               "first",
