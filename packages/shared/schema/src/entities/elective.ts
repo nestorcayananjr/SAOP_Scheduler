@@ -20,3 +20,5 @@ export const Elective = z.object({
         error: "year-long electives cannot also restrict allowedSemesters"
     }
 )
+
+export type Elective = z.infer<typeof Elective>

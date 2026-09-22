@@ -29,8 +29,9 @@ or code decisions here — prose only.
 Each student's slots are filled form two **disjointed** sources:
 
 - **Required** (`requiredElectiveIds` on the student): hard, student-specific placements the solver must honor - admin assignments (Skill Builders per H13, Spanish 1 per H16) *and* the student's single PE pick (per H19; the UI appends the chosen PE elective here). Never ranked.
-- **Ranked** (`rankedElectiveIds` on the preference): the general elective pool, fully ordered by the student. Drives S1/S4/S5. PE options and assigned electives are excluded. 
-Note: the number of electives a student ranks is not fixed across grade levels - it varies based on how many electives are available/eligible for that grade level. This is input-data, not a solver rule.
+- **Ranked** (`rankedElectiveIds` on the preference): the general elective pool, fully ordered by the student. Drives S1/S4/S5. PE options and assigned electives are excluded.
+
+Note: students rank their **entire** eligible elective pool (everything not already required/excluded), not a curated subset — the policy is the same across grades. The *number* ranked therefore isn't a fixed constant; it falls out of how many electives are eligible/available to that grade level (naturally smaller for 6th/7th than 8th). This is a fact about the input data, not a solver rule — nothing here enforces or checks it.
 
 ## Hard Constraints
 
