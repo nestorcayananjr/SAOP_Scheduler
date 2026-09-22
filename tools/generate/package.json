@@ -6,6 +6,9 @@
     "scripts": {
         "generate": "tsx src/main.ts"
     },
+    "dependencies": {
+        "@saop/schema": "*"
+    },
     "devDependencies": {
         "@types/node": "^26.6.2",
         "tsx": "^4.23.13",
