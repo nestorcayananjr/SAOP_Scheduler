@@ -1,7 +1,7 @@
 # Scheduling Rules — Source of Truth
 
 Status: DRAFT
-Last updated: 2026-09-17
+Last updated: 2026-09-22
 
 This document is the single source of truth for elective scheduling rules.
 Solver code and tests reference rules by ID (H1, H2… / S1, S2…). No schema
@@ -29,7 +29,8 @@ or code decisions here — prose only.
 Each student's slots are filled form two **disjointed** sources:
 
 - **Required** (`requiredElectiveIds` on the student): hard, student-specific placements the solver must honor - admin assignments (Skill Builders per H13, Spanish 1 per H16) *and* the student's single PE pick (per H19; the UI appends the chosen PE elective here). Never ranked.
-- **Ranked** (`rankedElectiveIds` on the preference): the general elective pool, fully ordered by the student. Drives S1/S4/S5. PE options and assigned electives are excluded.
+- **Ranked** (`rankedElectiveIds` on the preference): the general elective pool, fully ordered by the student. Drives S1/S4/S5. PE options and assigned electives are excluded. 
+Note: the number of electives a student ranks is not fixed across grade levels - it varies based on how many electives are available/eligible for that grade level. This is input-data, not a solver rule.
 
 ## Hard Constraints
 
@@ -58,6 +59,7 @@ Each student's slots are filled form two **disjointed** sources:
 | H21 | In addition to H19, 6th graders must also take an elective categorized as `Fine Arts` | Fine Arts electives live int he ranked pool (not a choose-one pick like PE), so the solver must hard-guarantee each 6th grader gets at least one Fine Arts elective from their ranked choices - ooverrided pure preference order.| 
 | H22 | A few electives are restricted to specific semester(s); their sections may only be scheduled in the allowed semeseter | Rare. Modeled as an optional `allowedSemesters` on the elective - absent means any semester. Does not apply to year-long electives.
 | H23 | Classrooms marked as `General Classroom` must be open for at least one of the block position slots on both ElectiveDay types. | |
+
 
 ---
 
