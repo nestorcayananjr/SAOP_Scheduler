@@ -21,6 +21,6 @@
     "url": "https://github.com/nestorcayananjr/SAOP_scheduler/issues"
   },
   "homepage": "https://github.com/nestorcayananjr/SAOP_scheduler#readme",
-  "workspaces": ["tools/*", "packages/*"],
+  "workspaces": ["tools/*", "packages/*", "packages/*/*"],
   "private": true
 }

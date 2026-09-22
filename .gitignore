@@ -5,3 +5,5 @@ dist/
 *.egg-info
 .env
 *_output.json
+ticket-planning-docs/
+packages/shared/schema/output/

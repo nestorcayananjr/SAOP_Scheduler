@@ -64,8 +64,8 @@ Not yet built: schemas, generator, solver, validator — do not assume they exis
 ## Vocabulary
 - **Section**: concrete instance (elective + teacher + room + block). An elective may have 0..n sections. Sections are solver OUTPUT, never input.
 - **Block**: an elective period in the bell schedule.
-- **Planning block**: teacher unavailable; their room may also be unavailable.
 - **Combinable group**: electives that may share one section (see rules.md for roster semantics).
+- **Blue vs Green**: blue days meet Monday/Thursday and green days meet Tuesday/Friday.
 
 ## Do not
 - Never soften or drop a hard constraint (H#) to make an infeasible case solve —
