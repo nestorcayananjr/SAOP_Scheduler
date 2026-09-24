@@ -7,7 +7,7 @@ export function makeRng (seed: number): () => number {
     }
 }
 
-function randInt(rng: () => number, min: number, max: number): number {
+export function randInt(rng: () => number, min: number, max: number): number {
   return Math.floor(rng() * (max - min + 1)) + min;
 }
 

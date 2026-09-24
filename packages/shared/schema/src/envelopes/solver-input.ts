@@ -7,7 +7,7 @@ import { Room } from "../entities/room.js"
 import { CombinableGroup } from "../entities/combinable-group.js"
 import { Preference } from "../entities/preference.js"
 
-const Weights = z.object({
+export const Weights = z.object({
     S1: z.number().nonnegative(),
     S2: z.number().nonnegative(),
     S3: z.number().nonnegative(),
@@ -16,17 +16,23 @@ const Weights = z.object({
     S6: z.number().nonnegative(),
 })
 
-const Config = z.object({
+export type Weights = z.infer<typeof Weights>
+
+export const Config = z.object({
     weights: Weights,
     timeLimitSeconds: z.number().int().positive().optional(),
     randomSeed: z.number().int().optional()
 })
 
-const LockedAssignment = z.object({
+export type Config = z.infer<typeof Config>
+
+export const LockedAssignment = z.object({
     studentId: z.number().int().positive(),
     electiveId: z.number().int().positive(),
     blockId: z.number().int().positive().optional()
 })
+
+export type LockedAssignment = z.infer<typeof LockedAssignment>
 
 export const SolverInput = z.object({
     students: z.array(Student),
