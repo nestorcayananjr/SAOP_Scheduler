@@ -8,3 +8,5 @@ export const Room = z.object({
     type: z.enum(RoomType), // H7
     capacity: z.number().int().positive() // H3
 })
+
+export type Room = z.infer<typeof Room>

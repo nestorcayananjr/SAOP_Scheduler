@@ -10,3 +10,5 @@ export const Block = z.object({
     blockPosition: z.enum(BlockPosition),
     days: z.enum(ElectiveDay)
 })
+
+export type Block = z.infer<typeof Block>

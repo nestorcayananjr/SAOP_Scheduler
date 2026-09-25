@@ -9,3 +9,5 @@ export const Student = z.object({
     takenElectiveIds: z.array(z.number().int().positive()).refine((ids) => new Set(ids).size === ids.length, { error: "takenElectiveIds must not contain dupes"}), // H9
     requiredElectiveIds: z.array(z.number().int().positive()).refine((ids) => new Set(ids).size === ids.length, { error: "requiredElectives must not contain dupes"}), // H2, H13, H16, H19
 })
+
+export type Student = z.infer<typeof Student>

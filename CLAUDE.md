@@ -52,10 +52,12 @@ Target folder structure (see Tech Stack for the two-runtime JSON contract):
 Phase 1 — CLI engine.
 Done: SCHED-001 (rules doc), SCHED-004 (OR-Tools spike), SCHED-012 Phase A (scaffold)
 In progress: SCHED-013 (this file + review setup)
-Not yet built: schemas, generator, solver, validator — do not assume they exist.
+Not yet built: solver, validator — do not assume they exist. Schemas
+(`packages/shared/schema/`) and the generator (`tools/generate/`) exist on
+this branch (SCHED-003, not yet merged — see Review workflow below).
 
 ## Commands
-- `npm run generate -- --seed 42 [--messy]` — synthetic data (tools/generate) (not yet built)
+- `npm run generate -- --seed 42 [--messy] [--out <path>]` — synthetic data (tools/generate)
 - `npm run lint-input -- <input.json>` — pre-solve data checks (tools/lint) (not yet built)
 - `npm run validate -- <input.json> <output.json>` — output verification + metrics (tools/validate) (not yet built)
 - `uv run python src/solver/main.py <input> <output>` — solve (from solver/) (not yet built)
