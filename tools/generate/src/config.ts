@@ -31,7 +31,7 @@ export const defaultConfig: Config = {
     },
     electiveCount: {
         [ElectiveType.FineArts]: 3,
-        [ElectiveType.General]: 15,
+        [ElectiveType.General]: 9,
         [ElectiveType.PhysicalEducation]: 3
     },
     skewExponent: 2,
@@ -50,9 +50,9 @@ export const defaultConfig: Config = {
     },
     teacherCount: 15,
     messiness: {
-        duplicateRankCount: 0,
-        blankSurveyCount: 0,
-        ineligibleRankingCount: 0
+        duplicateRankCount: 3,
+        blankSurveyCount: 3,
+        ineligibleRankingCount: 3
     },
     rates: {
         spanishAlreadyTaken: 0.2,

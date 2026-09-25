@@ -59,6 +59,8 @@ export function buildRooms(config: Config): Room[]{
 }
 
 const ALL_GRADES: Grade[] = [Grade["6th"], Grade["7th"], Grade["8th"]];
+const GRADES_7_AND_8: Grade[] = [Grade["7th"], Grade["8th"]];
+const GRADE_8_ONLY: Grade[] = [Grade["8th"]];
 
 // One hardcoded row per real-world elective (§1: "archetypes are fine"). Fields here are
 // policy-driven and fixed on purpose — id/eligibleTeacherIds/weight are generated below.
@@ -84,27 +86,27 @@ const electiveCatalog: ElectiveSpec[] = [
     { name: "PE - Fitness", electiveType: ElectiveType.PhysicalEducation, eligibleGradeLevels: ALL_GRADES, isYearLong: false, allowsMultipleSections: true, requiredTeacherCount: 1, teacherPoolSize: 1, requiredClassroomType: RoomType.PE, minSectionSize: 15, maxSectionSize: 25 },
     { name: "PE - Individual Sports", electiveType: ElectiveType.PhysicalEducation, eligibleGradeLevels: ALL_GRADES, isYearLong: false, allowsMultipleSections: true, requiredTeacherCount: 1, teacherPoolSize: 1, requiredClassroomType: RoomType.PE, minSectionSize: 15, maxSectionSize: 25 },
 
-    // Fine Arts (3) — H21: must include at least one eligible to 6th grade
-    { name: "Band", electiveType: ElectiveType.FineArts, eligibleGradeLevels: ALL_GRADES, isYearLong: false, allowsMultipleSections: false, requiredTeacherCount: 1, teacherPoolSize: 1, requiredClassroomType: RoomType.Band },
-    { name: "Art", electiveType: ElectiveType.FineArts, eligibleGradeLevels: ALL_GRADES, isYearLong: false, allowsMultipleSections: false, requiredTeacherCount: 1, teacherPoolSize: 1, requiredClassroomType: RoomType.Art },
+    // Fine Arts (3) — H21: must include at least one eligible to 6th grade (Chorus, "core" tier)
+    { name: "Band", electiveType: ElectiveType.FineArts, eligibleGradeLevels: GRADE_8_ONLY, isYearLong: false, allowsMultipleSections: false, requiredTeacherCount: 1, teacherPoolSize: 1, requiredClassroomType: RoomType.Band },
+    { name: "Art", electiveType: ElectiveType.FineArts, eligibleGradeLevels: GRADE_8_ONLY, isYearLong: false, allowsMultipleSections: false, requiredTeacherCount: 1, teacherPoolSize: 1, requiredClassroomType: RoomType.Art },
     { name: "Chorus", electiveType: ElectiveType.FineArts, eligibleGradeLevels: ALL_GRADES, isYearLong: false, allowsMultipleSections: false, requiredTeacherCount: 1, teacherPoolSize: 1 },
 
-    // General (15)
+    // General (9). Tiered by grade so the real ranked-pool size lands on config.rankedListLength's
+    // targets (6th:4, 7th:6, 8th:12) — see the pool-size design note in the PR write-up.
+    // "Core" tier (ALL_GRADES) — every grade sees these 4, plus Chorus above = 4 total for 6th.
     { name: "Spanish 1", electiveType: ElectiveType.General, eligibleGradeLevels: ALL_GRADES, isYearLong: true, allowsMultipleSections: true, requiredTeacherCount: 1, teacherPoolSize: 1, requiredClassroomType: RoomType.Spanish, minSectionSize: 15, maxSectionSize: 25 }, // H16
+    // Skill Builders stays ALL_GRADES deliberately — assignRequiredElectives assigns it with no
+    // grade check, so grade-restricting it here would silently violate H20 for ineligible grades.
     { name: "Skill Builders", electiveType: ElectiveType.General, eligibleGradeLevels: ALL_GRADES, isYearLong: false, allowsMultipleSections: false, requiredTeacherCount: 1, teacherPoolSize: 1 }, // H13
-    { name: "Service Learning", electiveType: ElectiveType.General, eligibleGradeLevels: [Grade["8th"]], isYearLong: false, allowsMultipleSections: false, requiredTeacherCount: 1, teacherPoolSize: 1, needsEligibleStudentIdsLater: true }, // H14, 8th-only per real reference structure
-    { name: "Broadcast Media", electiveType: ElectiveType.General, eligibleGradeLevels: [Grade["8th"]], isYearLong: false, allowsMultipleSections: false, requiredTeacherCount: 2, teacherPoolSize: 2, minSectionSize: 6, maxSectionSize: 12 }, // H18, 8th-only + capped size per real reference structure
-    { name: "Yearbook", electiveType: ElectiveType.General, eligibleGradeLevels: ALL_GRADES, isYearLong: false, allowsMultipleSections: false, requiredTeacherCount: 1, teacherPoolSize: 2 }, // S6: multi-teacher pool, count still 1
     { name: "Chess Club", electiveType: ElectiveType.General, eligibleGradeLevels: ALL_GRADES, isYearLong: false, allowsMultipleSections: false, requiredTeacherCount: 1, teacherPoolSize: 1 }, // combinable w/ Board Games
-    { name: "Board Games", electiveType: ElectiveType.General, eligibleGradeLevels: ALL_GRADES, isYearLong: false, allowsMultipleSections: false, requiredTeacherCount: 1, teacherPoolSize: 1 }, // combinable w/ Chess Club
-    { name: "Journalism", electiveType: ElectiveType.General, eligibleGradeLevels: ALL_GRADES, isYearLong: false, allowsMultipleSections: false, requiredTeacherCount: 1, teacherPoolSize: 1 },
-    { name: "Robotics", electiveType: ElectiveType.General, eligibleGradeLevels: ALL_GRADES, isYearLong: false, allowsMultipleSections: false, requiredTeacherCount: 1, teacherPoolSize: 1, requiredClassroomType: RoomType.ComputerLab },
-    { name: "Debate Club", electiveType: ElectiveType.General, eligibleGradeLevels: ALL_GRADES, isYearLong: false, allowsMultipleSections: false, requiredTeacherCount: 1, teacherPoolSize: 1 },
-    { name: "Creative Writing", electiveType: ElectiveType.General, eligibleGradeLevels: ALL_GRADES, isYearLong: false, allowsMultipleSections: false, requiredTeacherCount: 1, teacherPoolSize: 1 },
-    { name: "Cooking Club", electiveType: ElectiveType.General, eligibleGradeLevels: ALL_GRADES, isYearLong: false, allowsMultipleSections: false, requiredTeacherCount: 1, teacherPoolSize: 1 },
-    { name: "Coding Club", electiveType: ElectiveType.General, eligibleGradeLevels: ALL_GRADES, isYearLong: false, allowsMultipleSections: false, requiredTeacherCount: 1, teacherPoolSize: 1, requiredClassroomType: RoomType.ComputerLab },
-    { name: "Study Skills", electiveType: ElectiveType.General, eligibleGradeLevels: ALL_GRADES, isYearLong: false, allowsMultipleSections: false, requiredTeacherCount: 1, teacherPoolSize: 1 },
-    { name: "Peer Tutoring", electiveType: ElectiveType.General, eligibleGradeLevels: ALL_GRADES, isYearLong: false, allowsMultipleSections: false, requiredTeacherCount: 1, teacherPoolSize: 1 },
+    // "Upper" tier (7th+8th) — 2 more, bringing 7th to 6 total.
+    { name: "Board Games", electiveType: ElectiveType.General, eligibleGradeLevels: GRADES_7_AND_8, isYearLong: false, allowsMultipleSections: false, requiredTeacherCount: 1, teacherPoolSize: 1 }, // combinable w/ Chess Club
+    { name: "Journalism", electiveType: ElectiveType.General, eligibleGradeLevels: GRADES_7_AND_8, isYearLong: false, allowsMultipleSections: false, requiredTeacherCount: 1, teacherPoolSize: 1 },
+    // "Senior" tier (8th only) — 4 more here, plus Band/Art above = 6 more, bringing 8th to 12.
+    { name: "Service Learning", electiveType: ElectiveType.General, eligibleGradeLevels: GRADE_8_ONLY, isYearLong: false, allowsMultipleSections: false, requiredTeacherCount: 1, teacherPoolSize: 1, needsEligibleStudentIdsLater: true }, // H14
+    { name: "Broadcast Media", electiveType: ElectiveType.General, eligibleGradeLevels: GRADE_8_ONLY, isYearLong: false, allowsMultipleSections: false, requiredTeacherCount: 2, teacherPoolSize: 2, minSectionSize: 6, maxSectionSize: 12 }, // H18
+    { name: "Yearbook", electiveType: ElectiveType.General, eligibleGradeLevels: GRADE_8_ONLY, isYearLong: false, allowsMultipleSections: false, requiredTeacherCount: 1, teacherPoolSize: 2 }, // S6: multi-teacher pool, count still 1
+    { name: "Robotics", electiveType: ElectiveType.General, eligibleGradeLevels: GRADE_8_ONLY, isYearLong: false, allowsMultipleSections: false, requiredTeacherCount: 1, teacherPoolSize: 1, requiredClassroomType: RoomType.ComputerLab },
 ];
 
 export function buildElectives(config: Config, rng: () => number, teachers: Teacher[]): { electives: Elective[]; weights: Map<number, number> } {
@@ -178,9 +180,16 @@ export function assignRequiredElectives(config: Config, electives: Elective[], s
 
     for (const student of students){
         const copyOfStudent = structuredClone(student)
+
+        // H16 half 1: decide who already has Spanish 1 — into takenElectiveIds, NOT required.
+        if (copyOfStudent.grade === Grade["8th"] && rng() < config.rates.spanishAlreadyTaken){
+            copyOfStudent.takenElectiveIds.push(spanishOneElectiveId)
+        }
+
         copyOfStudent.requiredElectiveIds.push(pick(rng, peElectives).id)
 
-        if (student.grade === Grade["8th"] && rng() < config.rates.spanishAlreadyTaken){
+        // H16 half 2: require it for every 8th grader NOT already in takenElectiveIds.
+        if (copyOfStudent.grade === Grade["8th"] && !copyOfStudent.takenElectiveIds.includes(spanishOneElectiveId)){
             copyOfStudent.requiredElectiveIds.push(spanishOneElectiveId)
         }
 
@@ -209,7 +218,14 @@ export function assignServiceLearningEligibility(config: Config, electives: Elec
 export function buildPreferences(students: Student[], electives: Elective[], weights: Map<number, number>, rng: () => number): Preference[]{
     const preferences: Preference[] = []
     for (const student of students){
-        const pool = electives.filter((elective) => elective.eligibleGradeLevels.includes(student.grade) && !student.requiredElectiveIds.includes(elective.id))
+        // rules.md: "PE options and assigned electives are excluded" from the ranked pool —
+        // PE is a choose-one UI pick (H19), not something students rank against each other,
+        // so ALL PE electives are excluded here, not just the one that became required.
+        const pool = electives.filter((elective) =>
+            elective.eligibleGradeLevels.includes(student.grade) &&
+            elective.electiveType !== ElectiveType.PhysicalEducation &&
+            !student.requiredElectiveIds.includes(elective.id)
+        )
         const poolWeights = pool.map(e => weights.get(e.id)!)
 
         preferences.push({ studentId: student.id, rankedElectiveIds: weightedSampleWithoutReplacement(rng, pool, poolWeights, pool.length).map(e => e.id) })
