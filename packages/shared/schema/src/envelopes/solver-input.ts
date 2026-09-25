@@ -45,3 +45,5 @@ export const SolverInput = z.object({
     config: Config,
     lockedAssignments: z.array(LockedAssignment).default([])
 })
+
+export type SolverInput = z.infer<typeof SolverInput>
