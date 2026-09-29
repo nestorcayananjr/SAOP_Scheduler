@@ -4,7 +4,6 @@ export interface Config {
     gradeSizes: Record<Grade, number>
     electiveCount: Record<ElectiveType, number>,
     skewExponent: number,
-    rankedListLength: Record<Grade, number>,
     roomCount: Record<RoomType, number>,
     teacherCount: number,
     messiness: {
@@ -35,18 +34,13 @@ export const defaultConfig: Config = {
         [ElectiveType.PhysicalEducation]: 3
     },
     skewExponent: 2,
-    rankedListLength: {
-        [Grade["6th"]]: 4,
-        [Grade["7th"]]: 6,
-        [Grade["8th"]]: 12
-    },
     roomCount: {
         [RoomType.Art]: 1,
         [RoomType.Band]: 1,
         [RoomType.ComputerLab]: 1,
         [RoomType.GeneralClassroom]: 10,
         [RoomType.PE]: 2,
-        [RoomType.Spanish]: 1
+        [RoomType.Spanish]: 2
     },
     teacherCount: 15,
     messiness: {

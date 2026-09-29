@@ -30,16 +30,17 @@ export function buildTeachers(config: Config, rng: () => number): Teacher[]{
     return teachers;
 }
 
-export function buildRooms(config: Config): Room[]{
-    const mockRoomCapacityMap = {
-        [RoomType.Art]: 25,
-        [RoomType.Band]: 20,
-        [RoomType.ComputerLab]: 22,
-        [RoomType.GeneralClassroom]: 25,
-        [RoomType.PE]: 35,
-        [RoomType.Spanish]: 20
-    }
+// Hoisted out of buildRooms: the section-size estimates below need it too.
+const ROOM_CAPACITY: Record<RoomType, number> = {
+    [RoomType.Art]: 25,
+    [RoomType.Band]: 20,
+    [RoomType.ComputerLab]: 22,
+    [RoomType.GeneralClassroom]: 25,
+    [RoomType.PE]: 35,
+    [RoomType.Spanish]: 20
+}
 
+export function buildRooms(config: Config): Room[]{
     const rooms: Room[] = [];
     let id = 1;
 
@@ -49,7 +50,7 @@ export function buildRooms(config: Config): Room[]{
                 id: id,
                 roomNumber: 100 + id,
                 type: type as RoomType,
-                capacity: mockRoomCapacityMap[type as RoomType]
+                capacity: ROOM_CAPACITY[type as RoomType]
             })
             id++
         }
@@ -61,6 +62,8 @@ export function buildRooms(config: Config): Room[]{
 const ALL_GRADES: Grade[] = [Grade["6th"], Grade["7th"], Grade["8th"]];
 const GRADES_7_AND_8: Grade[] = [Grade["7th"], Grade["8th"]];
 const GRADE_8_ONLY: Grade[] = [Grade["8th"]];
+const GRADE_6_ONLY: Grade[] = [Grade["6th"]];
+const GRADE_7_ONLY: Grade[] = [Grade["7th"]];
 
 // One hardcoded row per real-world elective (§1: "archetypes are fine"). Fields here are
 // policy-driven and fixed on purpose — id/eligibleTeacherIds/weight are generated below.
@@ -72,6 +75,10 @@ type ElectiveSpec = {
     allowsMultipleSections: boolean;
     requiredTeacherCount: number;
     teacherPoolSize: number;
+    // Sections this elective is expected to need. Normally derived from config.gradeSizes
+    // (see expectedSections below); set explicitly only where the derivation can't see the
+    // real demand. Not solver output — a generator-side estimate used to budget teachers/rooms.
+    expectedSections?: number;
     requiredClassroomType?: RoomType;
     minSectionSize?: number;
     maxSectionSize?: number;
@@ -81,33 +88,147 @@ type ElectiveSpec = {
 };
 
 const electiveCatalog: ElectiveSpec[] = [
-    // Physical Education (3) — H19: every student needs one of these in requiredElectiveIds
     { name: "PE - Team Sports", electiveType: ElectiveType.PhysicalEducation, eligibleGradeLevels: ALL_GRADES, isYearLong: false, allowsMultipleSections: true, requiredTeacherCount: 1, teacherPoolSize: 1, requiredClassroomType: RoomType.PE, minSectionSize: 15, maxSectionSize: 25 },
     { name: "PE - Fitness", electiveType: ElectiveType.PhysicalEducation, eligibleGradeLevels: ALL_GRADES, isYearLong: false, allowsMultipleSections: true, requiredTeacherCount: 1, teacherPoolSize: 1, requiredClassroomType: RoomType.PE, minSectionSize: 15, maxSectionSize: 25 },
     { name: "PE - Individual Sports", electiveType: ElectiveType.PhysicalEducation, eligibleGradeLevels: ALL_GRADES, isYearLong: false, allowsMultipleSections: true, requiredTeacherCount: 1, teacherPoolSize: 1, requiredClassroomType: RoomType.PE, minSectionSize: 15, maxSectionSize: 25 },
 
-    // Fine Arts (3) — H21: must include at least one eligible to 6th grade (Chorus, "core" tier)
-    { name: "Band", electiveType: ElectiveType.FineArts, eligibleGradeLevels: GRADE_8_ONLY, isYearLong: false, allowsMultipleSections: false, requiredTeacherCount: 1, teacherPoolSize: 1, requiredClassroomType: RoomType.Band },
-    { name: "Art", electiveType: ElectiveType.FineArts, eligibleGradeLevels: GRADE_8_ONLY, isYearLong: false, allowsMultipleSections: false, requiredTeacherCount: 1, teacherPoolSize: 1, requiredClassroomType: RoomType.Art },
-    { name: "Chorus", electiveType: ElectiveType.FineArts, eligibleGradeLevels: ALL_GRADES, isYearLong: false, allowsMultipleSections: false, requiredTeacherCount: 1, teacherPoolSize: 1 },
+    { name: "Band", electiveType: ElectiveType.FineArts, eligibleGradeLevels: ALL_GRADES, isYearLong: false, allowsMultipleSections: false, requiredTeacherCount: 1, teacherPoolSize: 1, requiredClassroomType: RoomType.Band },
+    { name: "Art", electiveType: ElectiveType.FineArts, eligibleGradeLevels: ALL_GRADES, isYearLong: false, allowsMultipleSections: true, requiredTeacherCount: 1, teacherPoolSize: 1, requiredClassroomType: RoomType.Art },
+    { name: "Chorus", electiveType: ElectiveType.FineArts, eligibleGradeLevels: ALL_GRADES, isYearLong: false, allowsMultipleSections: false, requiredTeacherCount: 1, teacherPoolSize: 1, requiredClassroomType: RoomType.GeneralClassroom },
+    { name: "6th Grade Theater", electiveType: ElectiveType.FineArts, eligibleGradeLevels: GRADE_6_ONLY, isYearLong: true, allowsMultipleSections: true, requiredTeacherCount: 1, teacherPoolSize: 1 },
+    { name: "Speech", electiveType: ElectiveType.General, eligibleGradeLevels: GRADE_6_ONLY, isYearLong: false, allowsMultipleSections: true, requiredTeacherCount: 1, teacherPoolSize: 1 },
+    { name: "Student Leadership", electiveType: ElectiveType.General, eligibleGradeLevels: GRADE_7_ONLY, isYearLong: false, allowsMultipleSections: true, requiredTeacherCount: 1, teacherPoolSize: 1 },
 
-    // General (9). Tiered by grade so the real ranked-pool size lands on config.rankedListLength's
-    // targets (6th:4, 7th:6, 8th:12) — see the pool-size design note in the PR write-up.
-    // "Core" tier (ALL_GRADES) — every grade sees these 4, plus Chorus above = 4 total for 6th.
-    { name: "Spanish 1", electiveType: ElectiveType.General, eligibleGradeLevels: ALL_GRADES, isYearLong: true, allowsMultipleSections: true, requiredTeacherCount: 1, teacherPoolSize: 1, requiredClassroomType: RoomType.Spanish, minSectionSize: 15, maxSectionSize: 25 }, // H16
+    { name: "Spanish 1", electiveType: ElectiveType.General, eligibleGradeLevels: ALL_GRADES, isYearLong: true, allowsMultipleSections: true, requiredTeacherCount: 1, teacherPoolSize: 2, requiredClassroomType: RoomType.Spanish, minSectionSize: 15, maxSectionSize: 25 }, // H16
     // Skill Builders stays ALL_GRADES deliberately — assignRequiredElectives assigns it with no
     // grade check, so grade-restricting it here would silently violate H20 for ineligible grades.
-    { name: "Skill Builders", electiveType: ElectiveType.General, eligibleGradeLevels: ALL_GRADES, isYearLong: false, allowsMultipleSections: false, requiredTeacherCount: 1, teacherPoolSize: 1 }, // H13
+    { name: "Skill Builders", electiveType: ElectiveType.General, eligibleGradeLevels: ALL_GRADES, isYearLong: false, allowsMultipleSections: true, requiredTeacherCount: 1, teacherPoolSize: 1 }, // H13
     { name: "Chess Club", electiveType: ElectiveType.General, eligibleGradeLevels: ALL_GRADES, isYearLong: false, allowsMultipleSections: false, requiredTeacherCount: 1, teacherPoolSize: 1 }, // combinable w/ Board Games
-    // "Upper" tier (7th+8th) — 2 more, bringing 7th to 6 total.
-    { name: "Board Games", electiveType: ElectiveType.General, eligibleGradeLevels: GRADES_7_AND_8, isYearLong: false, allowsMultipleSections: false, requiredTeacherCount: 1, teacherPoolSize: 1 }, // combinable w/ Chess Club
+    { name: "Board Games", electiveType: ElectiveType.General, eligibleGradeLevels: GRADES_7_AND_8, isYearLong: false, allowsMultipleSections: true, requiredTeacherCount: 1, teacherPoolSize: 1 }, // combinable w/ Chess Club
     { name: "Journalism", electiveType: ElectiveType.General, eligibleGradeLevels: GRADES_7_AND_8, isYearLong: false, allowsMultipleSections: false, requiredTeacherCount: 1, teacherPoolSize: 1 },
-    // "Senior" tier (8th only) — 4 more here, plus Band/Art above = 6 more, bringing 8th to 12.
-    { name: "Service Learning", electiveType: ElectiveType.General, eligibleGradeLevels: GRADE_8_ONLY, isYearLong: false, allowsMultipleSections: false, requiredTeacherCount: 1, teacherPoolSize: 1, needsEligibleStudentIdsLater: true }, // H14
+    { name: "Service Learning", electiveType: ElectiveType.General, eligibleGradeLevels: GRADE_8_ONLY, isYearLong: false, allowsMultipleSections: true, requiredTeacherCount: 1, teacherPoolSize: 1, expectedSections: 1, needsEligibleStudentIdsLater: true }, // H14
     { name: "Broadcast Media", electiveType: ElectiveType.General, eligibleGradeLevels: GRADE_8_ONLY, isYearLong: false, allowsMultipleSections: false, requiredTeacherCount: 2, teacherPoolSize: 2, minSectionSize: 6, maxSectionSize: 12 }, // H18
     { name: "Yearbook", electiveType: ElectiveType.General, eligibleGradeLevels: GRADE_8_ONLY, isYearLong: false, allowsMultipleSections: false, requiredTeacherCount: 1, teacherPoolSize: 2 }, // S6: multi-teacher pool, count still 1
-    { name: "Robotics", electiveType: ElectiveType.General, eligibleGradeLevels: GRADE_8_ONLY, isYearLong: false, allowsMultipleSections: false, requiredTeacherCount: 1, teacherPoolSize: 1, requiredClassroomType: RoomType.ComputerLab },
+    { name: "Robotics", electiveType: ElectiveType.General, eligibleGradeLevels: GRADE_8_ONLY, isYearLong: false, allowsMultipleSections: true, requiredTeacherCount: 1, teacherPoolSize: 1, requiredClassroomType: RoomType.ComputerLab },
 ];
+
+// H5 caps a teacher at one section per block, and a semester holds
+// BlockPosition x ElectiveDay = 4 elective blocks. A year-long section keeps its block in both
+// semesters, so both teacher and room budgets are counted in "block-semesters".
+const BLOCKS_PER_SEMESTER = 2 * 2;
+const SEMESTERS = 2;
+const TEACHER_BLOCK_BUDGET = BLOCKS_PER_SEMESTER * SEMESTERS;
+
+const PE_ROW_COUNT = electiveCatalog.filter(s => s.electiveType === ElectiveType.PhysicalEducation).length;
+
+function sectionCapacity(spec: ElectiveSpec): number {
+    // an elective with no requiredClassroomType is assumed to land in a general classroom
+    const room = ROOM_CAPACITY[spec.requiredClassroomType ?? RoomType.GeneralClassroom];
+    return Math.min(room, spec.maxSectionSize ?? room);
+}
+
+function blockSemestersPerSection(spec: ElectiveSpec): number {
+    return spec.isYearLong ? SEMESTERS : 1;
+}
+
+// Slots a grade's reachable electives offer. H19 makes PE a choose-one pick, so the PE rows
+// contribute one slot between them, not one each.
+function gradePoolSlots(grade: Grade): number {
+    return electiveCatalog
+        .filter(spec => spec.eligibleGradeLevels.includes(grade))
+        .filter(spec => spec.electiveType !== ElectiveType.PhysicalEducation)
+        .reduce((sum, spec) => sum + blockSemestersPerSection(spec), 1);
+}
+
+// H1 gives every student 8 slots, drawn from whatever their grade can reach — so a grade's
+// take rate for any one elective is roughly 8 / gradePoolSlots. Rough on purpose: this only
+// has to be good enough to budget teachers and rooms, and it errs high.
+function expectedSections(spec: ElectiveSpec, config: Config): number {
+    if (spec.expectedSections !== undefined) return spec.expectedSections;
+    if (!spec.allowsMultipleSections) return 1; // H15
+
+    const peShare = spec.electiveType === ElectiveType.PhysicalEducation ? PE_ROW_COUNT : 1;
+    const enrolled = spec.eligibleGradeLevels.reduce(
+        (sum, grade) => sum + (config.gradeSizes[grade] * (8 / gradePoolSlots(grade))) / peShare, 0
+    );
+
+    return Math.max(1, Math.ceil(enrolled / sectionCapacity(spec)));
+}
+
+// Block-semesters one pool member is charged for carrying this elective. For a pool of one
+// (H10's common case — band, PE) this is exact; for larger pools it splits the load, except
+// where requiredTeacherCount forces every member on (H18's Broadcast Media).
+function teacherLoad(spec: ElectiveSpec, config: Config): number {
+    const sections = expectedSections(spec, config) * blockSemestersPerSection(spec);
+    return Math.ceil(sections * spec.requiredTeacherCount / spec.teacherPoolSize);
+}
+
+// Checks 1 and 2: pure functions of the catalog + config, so they run before any RNG is drawn.
+function assertCatalogFitsBudget(config: Config): void {
+    for (const spec of electiveCatalog) {
+        const load = teacherLoad(spec, config);
+        if (load > TEACHER_BLOCK_BUDGET) {
+            throw new Error(
+                `"${spec.name}" needs ~${expectedSections(spec, config)} section(s), charging each of its ` +
+                `${spec.teacherPoolSize} eligible teacher(s) ${load} block-semesters (budget ${TEACHER_BLOCK_BUDGET}). ` +
+                `Raise its teacherPoolSize, or pin a smaller expectedSections on the spec.`
+            );
+        }
+    }
+
+    const demand = new Map<RoomType, number>();
+    for (const spec of electiveCatalog) {
+        const type = spec.requiredClassroomType ?? RoomType.GeneralClassroom;
+        const need = expectedSections(spec, config) * blockSemestersPerSection(spec);
+        demand.set(type, (demand.get(type) ?? 0) + need);
+    }
+
+    for (const [type, need] of demand) {
+        const rooms = config.roomCount[type] ?? 0;
+        // H23: a general classroom must stay open for at least one block position on both
+        // ElectiveDay types, so only half its blocks per semester are bookable for electives.
+        const bookableBlocks = type === RoomType.GeneralClassroom ? BLOCKS_PER_SEMESTER / 2 : BLOCKS_PER_SEMESTER;
+        const supply = rooms * bookableBlocks * SEMESTERS;
+        if (need > supply) {
+            throw new Error(
+                `${type} is oversubscribed: sections need ${need} block-semesters but ${rooms} room(s) ` +
+                `supply ${supply}. Raise roomCount for ${type}.`
+            );
+        }
+    }
+}
+
+// Draws each elective's eligibleTeacherIds least-loaded-first rather than independently at
+// random, so no teacher ends up sole-eligible for more sections than H5 lets them teach.
+function assignTeacherPools(config: Config, teacherIds: number[], rng: () => number): Map<string, number[]> {
+    const load = new Map<number, number>(teacherIds.map(id => [id, 0]));
+    const pools = new Map<string, number[]>();
+
+    // heaviest electives first, so they commit the scarce budget before the cheap rows do
+    const order = [...electiveCatalog].sort((a, b) => teacherLoad(b, config) - teacherLoad(a, config));
+
+    for (const spec of order) {
+        const cost = teacherLoad(spec, config);
+        const pool = shuffle(rng, teacherIds)                      // shuffle first so ties break randomly
+            .sort((a, b) => load.get(a)! - load.get(b)!)
+            .slice(0, spec.teacherPoolSize);
+
+        for (const id of pool) {
+            const next = load.get(id)! + cost;
+            // Check 3: the catalog fits in principle (checks 1-2), but not onto this many staff.
+            if (next > TEACHER_BLOCK_BUDGET) {
+                throw new Error(
+                    `Teacher ${id} would carry ${next} block-semesters (budget ${TEACHER_BLOCK_BUDGET}) ` +
+                    `after "${spec.name}". The catalog needs more staff — raise config.teacherCount.`
+                );
+            }
+            load.set(id, next);
+        }
+        pools.set(spec.name, pool);
+    }
+
+    return pools;
+}
 
 export function buildElectives(config: Config, rng: () => number, teachers: Teacher[]): { electives: Elective[]; weights: Map<number, number> } {
     const teacherIds = teachers.map(t => t.id);
@@ -115,12 +236,15 @@ export function buildElectives(config: Config, rng: () => number, teachers: Teac
     // correlated with where an elective happens to sit in the hardcoded list above
     const popularityOrder = shuffle(rng, electiveCatalog.map((_, i) => i));
 
+    assertCatalogFitsBudget(config);
+    const teacherPools = assignTeacherPools(config, teacherIds, rng);
+
     const electives: Elective[] = [];
     const weights = new Map<number, number>();
 
     electiveCatalog.forEach((spec, i) => {
         const id = i + 1;
-        const eligibleTeacherIds = shuffle(rng, teacherIds).slice(0, spec.teacherPoolSize);
+        const eligibleTeacherIds = teacherPools.get(spec.name)!;
 
         const elective: Elective = {
             id,
@@ -224,7 +348,10 @@ export function buildPreferences(students: Student[], electives: Elective[], wei
         const pool = electives.filter((elective) =>
             elective.eligibleGradeLevels.includes(student.grade) &&
             elective.electiveType !== ElectiveType.PhysicalEducation &&
-            !student.requiredElectiveIds.includes(elective.id)
+            !student.requiredElectiveIds.includes(elective.id) &&
+            // H9: already-taken electives are not rankable either — assignRequiredElectives
+            // puts Spanish 1 in takenElectiveIds for the 8th graders who've had it.
+            !student.takenElectiveIds.includes(elective.id)
         )
         const poolWeights = pool.map(e => weights.get(e.id)!)
 
