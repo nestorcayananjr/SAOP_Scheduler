@@ -33,16 +33,23 @@ npm run generate -- --seed 42
   `*.messy.answers.json` file alongside the output, listing exactly what
   was dirtied (a duplicate-rank entry will also fail the schema's own
   validation — that's intentional, see `docs/rules.md`).
-- **`--out <path>`** (optional) — defaults to `./solver_input.json`
-  (relative to wherever you run the command from).
+- **`--out <path>`** (optional) — defaults to `solver_input.json` inside
+  `tools/generate/`. Relative paths resolve against `tools/generate/`, not
+  the repo root, because npm runs the workspace script with that directory
+  as its working directory. Use `../../` to reach the repo root, or pass an
+  absolute path. The parent directory must already exist — the tool does not
+  create it.
 
 Example — three different clean fixtures, plus one messy one for testing
 a linter against:
 ```
+mkdir -p fixtures
 npm run generate -- --seed 42
-npm run generate -- --seed 43 --out fixtures/seed43.json
-npm run generate -- --seed 44 --messy --out fixtures/seed44.messy.json
+npm run generate -- --seed 43 --out ../../fixtures/seed43.json
+npm run generate -- --seed 44 --messy --out ../../fixtures/seed44-messy.json
 ```
+The first command writes `tools/generate/solver_input.json`; the other two
+write into `fixtures/` at the repo root.
 
 ## Environment variables
 
