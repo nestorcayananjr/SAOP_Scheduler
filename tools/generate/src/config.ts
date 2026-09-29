@@ -1,8 +1,7 @@
-import { ElectiveType, Grade, Room, RoomType, Weights } from "@saop/schema"
+import { Grade, RoomType, Weights } from "@saop/schema"
 
 export interface Config {
     gradeSizes: Record<Grade, number>
-    electiveCount: Record<ElectiveType, number>,
     skewExponent: number,
     roomCount: Record<RoomType, number>,
     teacherCount: number,
@@ -27,11 +26,6 @@ export const defaultConfig: Config = {
         [Grade["6th"]]: 49,
         [Grade["7th"]]: 52,
         [Grade["8th"]]: 49
-    },
-    electiveCount: {
-        [ElectiveType.FineArts]: 3,
-        [ElectiveType.General]: 9,
-        [ElectiveType.PhysicalEducation]: 3
     },
     skewExponent: 2,
     roomCount: {

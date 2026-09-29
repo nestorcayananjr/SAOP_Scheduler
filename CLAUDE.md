@@ -68,6 +68,9 @@ this branch (SCHED-003, not yet merged — see Review workflow below).
 - **Block**: an elective period in the bell schedule.
 - **Combinable group**: electives that may share one section (see rules.md for roster semantics).
 - **Blue vs Green**: blue days meet Monday/Thursday and green days meet Tuesday/Friday.
+  In code this is the `ElectiveDay` enum (`packages/shared/schema/src/primitives.ts`):
+  members are named `MondayThursday` / `TuesdayFriday`, whose values carry the school's
+  wording (`"Blue Day Mon/Thurs"` / `"Green Day Tue/Fri"`).
 
 ## Do not
 - Never soften or drop a hard constraint (H#) to make an infeasible case solve —

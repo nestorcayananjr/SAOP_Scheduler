@@ -51,6 +51,9 @@ npm run generate -- --seed 44 --messy --out ../../fixtures/seed44-messy.json
 The first command writes `tools/generate/solver_input.json`; the other two
 write into `fixtures/` at the repo root.
 
+For how the generator guarantees the data it emits is actually schedulable, see
+[`tools/generate/README.md`](tools/generate/README.md).
+
 ## Environment variables
 
 ## Manual setup you must do yourself

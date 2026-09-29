@@ -7,7 +7,7 @@ export function assertConsistent(input: SolverInput): void {
     const blockIds = new Set(input.blocks.map(b => b.id));
     const roomTypesInUse = new Set(input.rooms.map(r => r.type));
 
-    // Worked example — every eligibleTeacherIds entry must reference a real teacher.
+    // every eligibleTeacherIds entry must reference a real teacher
     for (const elective of input.electives) {
         for (const teacherId of elective.eligibleTeacherIds) {
             if (!teacherIds.has(teacherId)) {
@@ -18,7 +18,6 @@ export function assertConsistent(input: SolverInput): void {
         }
     }
 
-    // TODO: every preference.studentId ∈ students
     for (const preference of input.preferences) { 
         if (!studentIds.has(preference.studentId)) {
             throw new Error(

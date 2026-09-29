@@ -39,10 +39,14 @@ const messy = values.messy ?? false;
 const outPath = values.out ?? "./solver_input.json";
 
 const rng = makeRng(seed);
-// echo the seed into the output (§3a) — config.randomSeed must equal --seed
+// Echo the seed into the output: config.randomSeed must equal --seed, so a run is
+// reproducible from the written file alone without knowing the command that made it.
 const config = { ...defaultConfig, randomSeed: seed };
 
-// §4: generation order — later steps only ever draw IDs from entities earlier steps created.
+// Generation order is load-bearing: every step below draws IDs only from entities an
+// earlier step already created, which is what makes the output referentially intact
+// (and feasible) by construction. The one exception is the H14 patch further down,
+// which fills in a field that could not be known until students existed.
 const blocks = buildBlocks();
 const teachers = buildTeachers(config, rng);
 const rooms = buildRooms(config);
@@ -77,10 +81,16 @@ if (messy) {
     messyRecords = result.records;
 }
 
-// §4 step 12 / §3g — the gate. Referential integrity (4b) must always hold, messy or clean,
-// since none of the messy mutators introduce dangling ids. Schema shape (4a) is a hard gate on
-// the clean path, but duplicate-rank injection is *designed* to fail Preference's dupe refine —
-// so in messy mode we report the failure instead of throwing (documented policy, §5 Step 5c).
+// The self-validation gate, in two halves that are deliberately NOT equally strict:
+//
+//   1. Referential integrity (assertConsistent) is a hard gate on BOTH paths — no messy
+//      mutator introduces a dangling id, so a dangling id is always a real generator bug.
+//   2. Schema shape (SolverInput.safeParse) is a hard gate on the clean path only. The
+//      duplicate-rank injection is *designed* to fail Preference's dupe refine, so --messy
+//      reports the failure instead of throwing.
+//
+// That asymmetry is the point of --messy, not an oversight: it exists to feed the linter
+// (SCHED-009) data that is invalid on purpose. See the class-by-class breakdown in messy.ts.
 assertConsistent(assembled);
 
 const parseResult = SolverInput.safeParse(assembled);

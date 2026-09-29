@@ -1,4 +1,4 @@
-import { Block, Semester, BlockPosition, ElectiveDay, Teacher, Room, RoomType, Elective, ElectiveType, Grade, Student, Preference, CombinableGroup, LockedAssignment, Config as SolverOutputConfig } from "@saop/schema";
+import { Block, Semester, BlockPosition, ElectiveDay, Teacher, Room, RoomType, Elective, ElectiveType, Grade, Student, Preference, CombinableGroup, LockedAssignment, Config as SolverInputConfig } from "@saop/schema";
 import type { Config } from "./config.js";
 import { pick, shuffle, weightedSampleWithoutReplacement } from "./rng.js";
 
@@ -65,8 +65,9 @@ const GRADE_8_ONLY: Grade[] = [Grade["8th"]];
 const GRADE_6_ONLY: Grade[] = [Grade["6th"]];
 const GRADE_7_ONLY: Grade[] = [Grade["7th"]];
 
-// One hardcoded row per real-world elective (§1: "archetypes are fine"). Fields here are
-// policy-driven and fixed on purpose — id/eligibleTeacherIds/weight are generated below.
+// One hardcoded row per real-world elective. SCHED-003 puts mimicking the school's actual
+// elective list out of scope, so these are archetypes. Fields here are policy-driven and
+// fixed on purpose — id/eligibleTeacherIds/weight are generated below.
 type ElectiveSpec = {
     name: string;
     electiveType: ElectiveType;
@@ -83,7 +84,8 @@ type ElectiveSpec = {
     minSectionSize?: number;
     maxSectionSize?: number;
     // H14: this elective needs eligibleStudentIds, but student ids don't exist yet at this
-    // point in the build order (§4: electives before students) — patched in after buildStudents.
+    // point in the build order (electives are built before students) — patched in afterward
+    // by assignServiceLearningEligibility.
     needsEligibleStudentIdsLater?: boolean;
 };
 
@@ -112,12 +114,12 @@ const electiveCatalog: ElectiveSpec[] = [
     { name: "Robotics", electiveType: ElectiveType.General, eligibleGradeLevels: GRADE_8_ONLY, isYearLong: false, allowsMultipleSections: true, requiredTeacherCount: 1, teacherPoolSize: 1, requiredClassroomType: RoomType.ComputerLab },
 ];
 
-// H5 caps a teacher at one section per block, and a semester holds
-// BlockPosition x ElectiveDay = 4 elective blocks. A year-long section keeps its block in both
-// semesters, so both teacher and room budgets are counted in "block-semesters".
+// Feasibility estimator — see tools/generate/README.md for the model and its units.
 const BLOCKS_PER_SEMESTER = 2 * 2;
 const SEMESTERS = 2;
 const TEACHER_BLOCK_BUDGET = BLOCKS_PER_SEMESTER * SEMESTERS;
+const ELECTIVE_SLOTS_PER_STUDENT = 8;  // H1: exactly 8 slots per student per year
+const PE_CHOOSE_ONE_SLOT = 1;          // H19: all PE rows collapse to ONE slot in the pool
 
 const PE_ROW_COUNT = electiveCatalog.filter(s => s.electiveType === ElectiveType.PhysicalEducation).length;
 
@@ -137,7 +139,7 @@ function gradePoolSlots(grade: Grade): number {
     return electiveCatalog
         .filter(spec => spec.eligibleGradeLevels.includes(grade))
         .filter(spec => spec.electiveType !== ElectiveType.PhysicalEducation)
-        .reduce((sum, spec) => sum + blockSemestersPerSection(spec), 1);
+        .reduce((sum, spec) => sum + blockSemestersPerSection(spec), PE_CHOOSE_ONE_SLOT);
 }
 
 // H1 gives every student 8 slots, drawn from whatever their grade can reach — so a grade's
@@ -147,9 +149,12 @@ function expectedSections(spec: ElectiveSpec, config: Config): number {
     if (spec.expectedSections !== undefined) return spec.expectedSections;
     if (!spec.allowsMultipleSections) return 1; // H15
 
-    const peShare = spec.electiveType === ElectiveType.PhysicalEducation ? PE_ROW_COUNT : 1;
+    // H19 gives a grade one PE pick total, split across the PE rows competing for it
+    const peRowsSharingOneSlot = spec.electiveType === ElectiveType.PhysicalEducation ? PE_ROW_COUNT : 1;
     const enrolled = spec.eligibleGradeLevels.reduce(
-        (sum, grade) => sum + (config.gradeSizes[grade] * (8 / gradePoolSlots(grade))) / peShare, 0
+        (sum, grade) => sum +
+            (config.gradeSizes[grade] * (ELECTIVE_SLOTS_PER_STUDENT / gradePoolSlots(grade))) / peRowsSharingOneSlot,
+        0
     );
 
     return Math.max(1, Math.ceil(enrolled / sectionCapacity(spec)));
@@ -380,7 +385,7 @@ export function buildLockedAssignments(students: Student[], blocks: Block[], rng
     ];
 }
 
-export function buildSolverConfig(config: Config): SolverOutputConfig {
+export function buildSolverConfig(config: Config): SolverInputConfig {
     return {
         weights: config.weights,
         timeLimitSeconds: config.timeLimitSeconds,

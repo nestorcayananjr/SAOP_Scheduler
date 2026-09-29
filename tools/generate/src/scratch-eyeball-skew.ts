@@ -1,4 +1,5 @@
-// Scratch script — §5 Step 7 "eyeball skew" check, post-§3b-correction.
+// Scratch script — the "eyeball one for skew" verification step from SCHED-003's testing
+// notes. Not part of the generate CLI; nothing imports it.
 // Every student ranks their ENTIRE eligible pool, so raw appearance count is flat by
 // construction. Skew shows up as rank POSITION instead — popular electives should cluster
 // near rank 1 across students who had them in their pool; unpopular ones drift toward the tail.

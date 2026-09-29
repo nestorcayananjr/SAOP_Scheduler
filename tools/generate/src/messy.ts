@@ -2,7 +2,7 @@ import { SolverInput, RoomType } from "@saop/schema";
 import type { Config } from "./config.js";
 import { pick, shuffle } from "./rng.js";
 
-// §3g answer-key record — SCHED-009's linter can assert "did I find exactly these?"
+// Answer-key record: SCHED-009's linter can assert "did I find exactly these?" against it.
 //
 // That assertion only holds if every record is exactly true, so the preference mutators below
 // are given DISJOINT target lists by applyMessy: no student receives more than one defect.
@@ -11,7 +11,7 @@ import { pick, shuffle } from "./rng.js";
 // un-blanked it) while the earlier record survived and lied about it.
 export type MessyRecord = { kind: string; studentId?: number; detail: string };
 
-// §3g: schema-INVALID — fails Preference's dupe refine ([7,7,3]). Duplicates an existing
+// Schema-INVALID — fails Preference's dupe refine ([7,7,3]). Duplicates an existing
 // ranked-elective id within each target's preferences.
 export function injectDuplicateRanks(input: SolverInput, rng: () => number, targets: number[]): { input: SolverInput; records: MessyRecord[] } {
     const records: MessyRecord[] = [];
@@ -27,7 +27,8 @@ export function injectDuplicateRanks(input: SolverInput, rng: () => number, targ
     return { input: { ...input, preferences }, records };
 }
 
-// §3g: schema-valid — empty rankedElectiveIds. Blanks out each target's preferences entirely.
+// Schema-valid — an empty array passes Preference; only the linter can flag a blank survey.
+// Blanks out each target's preferences entirely.
 export function injectBlankSurveys(input: SolverInput, targets: number[]): { input: SolverInput; records: MessyRecord[] } {
     const records: MessyRecord[] = [];
     const targeted = new Set(targets);
@@ -41,7 +42,7 @@ export function injectBlankSurveys(input: SolverInput, targets: number[]): { inp
     return { input: { ...input, preferences }, records };
 }
 
-// §3g: schema-valid (no cross-entity refine catches it) — ranks an elective the student's
+// Schema-valid (no cross-entity refine catches it) — ranks an elective the student's
 // grade isn't eligible for (H20 violation).
 export function injectIneligibleRankings(input: SolverInput, rng: () => number, targets: number[]): { input: SolverInput; records: MessyRecord[] } {
     const records: MessyRecord[] = [];
@@ -66,8 +67,9 @@ export function injectIneligibleRankings(input: SolverInput, rng: () => number, 
     return { input: { ...input, preferences }, records };
 }
 
-// §3g: schema-valid — demand > capacity isn't a schema concern. Shrinks one specialty room's
-// capacity to force oversubscription. No target list — a single room-level event.
+// Schema-valid — demand > capacity is feasibility, not shape, so no schema catches it.
+// Shrinks one specialty room's capacity to force oversubscription. No target list — this
+// is a single room-level event rather than a per-student defect.
 export function oversubscribeSpecialtyRoom(input: SolverInput, rng: () => number): { input: SolverInput; records: MessyRecord[] } {
     const specialtyRooms = input.rooms.filter(r => r.type !== RoomType.GeneralClassroom);
     if (specialtyRooms.length === 0) return { input, records: [] };
@@ -101,7 +103,9 @@ function drawTargets(pool: number[], n: number, knob: string, accepts: (studentI
     return picked;
 }
 
-// §5 Step 5: applies all four mutators on top of a clean, feasible base, per config.messiness.
+// Applies all four mutators on top of a clean, feasible base, per config.messiness. Layering
+// dirt onto a known-good base (rather than generating dirty from scratch) is what keeps every
+// injected defect traceable to a record above.
 export function applyMessy(input: SolverInput, config: Config, rng: () => number): { input: SolverInput; records: MessyRecord[] } {
     const { duplicateRankCount, blankSurveyCount, ineligibleRankingCount } = config.messiness;
 
