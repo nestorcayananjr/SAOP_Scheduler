@@ -1,7 +1,7 @@
 # Scheduling Rules — Source of Truth
 
 Status: DRAFT
-Last updated: 2026-09-22
+Last updated: 2026-09-29
 
 This document is the single source of truth for elective scheduling rules.
 Solver code and tests reference rules by ID (H1, H2… / S1, S2…). No schema
@@ -43,7 +43,7 @@ Note: students rank their **entire** eligible elective pool (everything not alre
 | H4 | Specialty classes (band, music, tech) can only be scheduled in their matching specialty room | |
 | H5 | A teacher cannot be double-booked across two classes in the same period | |
 | H6 | A room cannot be double-booked across two classes in the same period | |
-| H7 | General-purpose/teacher classrooms must be available for at least one of the two elective blocks for a planning period. **SUPERSEDED** by H23 | ID retained, do not reuse, reference H23|
+| H7 | General-purpose/teacher classrooms must be available for at least one of the two elective blocks for a planning period. **SUPERSEDED** by H23 | ID retained, do not reuse, reference H23. *Note* This app is scoped to only electives, in this case, elective teachers will be given planning periods by admin manually and/or will work itself out.|
 | H8 | A student cannot be double-booked across two classes in the same period | |
 | H9 | Students cannot take electives they have already taken | TODO: verify with Veronica this is a rule |
 | H10 | Teachers may only teach electives for which they are listed as eligible. Eligibility is an explicit per-elective set of teachers (`eligibleTeacherIds`), pool size >= 1 - a single-teacher elective (band, art, PE) is just a pool of one; a department-taught elective (e.g. Life of a Dolphin) is a larger pool. | TODO: verify with Veronica, band teachers should prioritize band, but what about general elective teachers?| Hard rail of *who may* teach. The soft preference of *who ideally* teaches (specialists prioritizing their specialty) is S6. Separate from H4 (specialty room) — band is constrained on both, independently. |
