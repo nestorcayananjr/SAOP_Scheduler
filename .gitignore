@@ -7,3 +7,5 @@ dist/
 *_output.json
 ticket-planning-docs/
 packages/shared/schema/output/
+tools/generate/solver_input*.json
+tools/generate/*.messy.answers.json

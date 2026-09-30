@@ -1,7 +1,7 @@
 # Scheduling Rules — Source of Truth
 
 Status: DRAFT
-Last updated: 2026-09-17
+Last updated: 2026-09-29
 
 This document is the single source of truth for elective scheduling rules.
 Solver code and tests reference rules by ID (H1, H2… / S1, S2…). No schema
@@ -31,6 +31,8 @@ Each student's slots are filled form two **disjointed** sources:
 - **Required** (`requiredElectiveIds` on the student): hard, student-specific placements the solver must honor - admin assignments (Skill Builders per H13, Spanish 1 per H16) *and* the student's single PE pick (per H19; the UI appends the chosen PE elective here). Never ranked.
 - **Ranked** (`rankedElectiveIds` on the preference): the general elective pool, fully ordered by the student. Drives S1/S4/S5. PE options and assigned electives are excluded.
 
+Note: students rank their **entire** eligible elective pool (everything not already required/excluded), not a curated subset — the policy is the same across grades. The *number* ranked therefore isn't a fixed constant; it falls out of how many electives are eligible/available to that grade level (naturally smaller for 6th/7th than 8th). This is a fact about the input data, not a solver rule — nothing here enforces or checks it.
+
 ## Hard Constraints
 
 | ID | Rule | Notes |
@@ -41,7 +43,7 @@ Each student's slots are filled form two **disjointed** sources:
 | H4 | Specialty classes (band, music, tech) can only be scheduled in their matching specialty room | |
 | H5 | A teacher cannot be double-booked across two classes in the same period | |
 | H6 | A room cannot be double-booked across two classes in the same period | |
-| H7 | General-purpose/teacher classrooms must be available for at least one of the two elective blocks for a planning period. **SUPERSEDED** by H23 | ID retained, do not reuse, reference H23|
+| H7 | General-purpose/teacher classrooms must be available for at least one of the two elective blocks for a planning period. **SUPERSEDED** by H23 | ID retained, do not reuse, reference H23. *Note* This app is scoped to only electives, in this case, elective teachers will be given planning periods by admin manually and/or will work itself out.|
 | H8 | A student cannot be double-booked across two classes in the same period | |
 | H9 | Students cannot take electives they have already taken | TODO: verify with Veronica this is a rule |
 | H10 | Teachers may only teach electives for which they are listed as eligible. Eligibility is an explicit per-elective set of teachers (`eligibleTeacherIds`), pool size >= 1 - a single-teacher elective (band, art, PE) is just a pool of one; a department-taught elective (e.g. Life of a Dolphin) is a larger pool. | TODO: verify with Veronica, band teachers should prioritize band, but what about general elective teachers?| Hard rail of *who may* teach. The soft preference of *who ideally* teaches (specialists prioritizing their specialty) is S6. Separate from H4 (specialty room) — band is constrained on both, independently. |
@@ -58,6 +60,7 @@ Each student's slots are filled form two **disjointed** sources:
 | H21 | In addition to H19, 6th graders must also take an elective categorized as `Fine Arts` | Fine Arts electives live int he ranked pool (not a choose-one pick like PE), so the solver must hard-guarantee each 6th grader gets at least one Fine Arts elective from their ranked choices - ooverrided pure preference order.| 
 | H22 | A few electives are restricted to specific semester(s); their sections may only be scheduled in the allowed semeseter | Rare. Modeled as an optional `allowedSemesters` on the elective - absent means any semester. Does not apply to year-long electives.
 | H23 | Classrooms marked as `General Classroom` must be open for at least one of the block position slots on both ElectiveDay types. | |
+
 
 ---
 

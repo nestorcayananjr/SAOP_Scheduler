@@ -4,3 +4,5 @@ export const CombinableGroup = z.object({
     id: z.number().int().positive(),
     electiveIds: z.array(z.number().int().positive()).min(2)
 })
+
+export type CombinableGroup = z.infer<typeof CombinableGroup>

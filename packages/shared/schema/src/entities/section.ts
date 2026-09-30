@@ -9,3 +9,5 @@ export const Section = z.object({
     blockIds: z.array(z.number().int().positive()).min(1).max(2),
     studentIds: z.array(z.number().int().positive()),
 })
+
+export type Section = z.infer<typeof Section>
