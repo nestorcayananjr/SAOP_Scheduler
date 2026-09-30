@@ -2,17 +2,8 @@ import { SolverInput, RoomType } from "@saop/schema";
 import type { Config } from "./config.js";
 import { pick, shuffle } from "./rng.js";
 
-// Answer-key record: SCHED-009's linter can assert "did I find exactly these?" against it.
-//
-// That assertion only holds if every record is exactly true, so the preference mutators below
-// are given DISJOINT target lists by applyMessy: no student receives more than one defect.
-// They used to draw their own targets independently, which let a later mutator silently undo an
-// earlier one's work (blanking a survey erased a duplicate; appending to a blanked survey
-// un-blanked it) while the earlier record survived and lied about it.
 export type MessyRecord = { kind: string; studentId?: number; detail: string };
 
-// Schema-INVALID — fails Preference's dupe refine ([7,7,3]). Duplicates an existing
-// ranked-elective id within each target's preferences.
 export function injectDuplicateRanks(input: SolverInput, rng: () => number, targets: number[]): { input: SolverInput; records: MessyRecord[] } {
     const records: MessyRecord[] = [];
     const targeted = new Set(targets);
@@ -27,8 +18,6 @@ export function injectDuplicateRanks(input: SolverInput, rng: () => number, targ
     return { input: { ...input, preferences }, records };
 }
 
-// Schema-valid — an empty array passes Preference; only the linter can flag a blank survey.
-// Blanks out each target's preferences entirely.
 export function injectBlankSurveys(input: SolverInput, targets: number[]): { input: SolverInput; records: MessyRecord[] } {
     const records: MessyRecord[] = [];
     const targeted = new Set(targets);
@@ -67,9 +56,6 @@ export function injectIneligibleRankings(input: SolverInput, rng: () => number, 
     return { input: { ...input, preferences }, records };
 }
 
-// Schema-valid — demand > capacity is feasibility, not shape, so no schema catches it.
-// Shrinks one specialty room's capacity to force oversubscription. No target list — this
-// is a single room-level event rather than a per-student defect.
 export function oversubscribeSpecialtyRoom(input: SolverInput, rng: () => number): { input: SolverInput; records: MessyRecord[] } {
     const specialtyRooms = input.rooms.filter(r => r.type !== RoomType.GeneralClassroom);
     if (specialtyRooms.length === 0) return { input, records: [] };
@@ -81,8 +67,6 @@ export function oversubscribeSpecialtyRoom(input: SolverInput, rng: () => number
     return { input: { ...input, rooms }, records };
 }
 
-// Draws `n` students from `pool` that `accepts` allows, removing them so no other mutator can
-// claim them. Students this mutator can't use go back for the others rather than being burned.
 function drawTargets(pool: number[], n: number, knob: string, accepts: (studentId: number) => boolean): number[] {
     const picked: number[] = [];
     const passedOver: number[] = [];
@@ -103,9 +87,6 @@ function drawTargets(pool: number[], n: number, knob: string, accepts: (studentI
     return picked;
 }
 
-// Applies all four mutators on top of a clean, feasible base, per config.messiness. Layering
-// dirt onto a known-good base (rather than generating dirty from scratch) is what keeps every
-// injected defect traceable to a record above.
 export function applyMessy(input: SolverInput, config: Config, rng: () => number): { input: SolverInput; records: MessyRecord[] } {
     const { duplicateRankCount, blankSurveyCount, ineligibleRankingCount } = config.messiness;
 
@@ -117,12 +98,9 @@ export function applyMessy(input: SolverInput, config: Config, rng: () => number
             .filter(grade => input.electives.some(e => !e.eligibleGradeLevels.includes(grade)))
     );
 
-    // One shuffled pool, dealt out disjointly — see the note on MessyRecord above.
     const pool = shuffle(rng, input.preferences.map(p => p.studentId));
     const hasRankings = (id: number) => (ranked.get(id)?.length ?? 0) > 0;
 
-    // duplicate and blank both need a non-empty list to act on; ineligible needs the student's
-    // grade to have something it can't take.
     const dupeTargets = drawTargets(pool, duplicateRankCount, "duplicateRankCount", hasRankings);
     const blankTargets = drawTargets(pool, blankSurveyCount, "blankSurveyCount", hasRankings);
     const ineligibleTargets = drawTargets(pool, ineligibleRankingCount, "ineligibleRankingCount",

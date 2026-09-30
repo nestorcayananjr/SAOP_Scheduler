@@ -7,7 +7,6 @@ export function assertConsistent(input: SolverInput): void {
     const blockIds = new Set(input.blocks.map(b => b.id));
     const roomTypesInUse = new Set(input.rooms.map(r => r.type));
 
-    // every eligibleTeacherIds entry must reference a real teacher
     for (const elective of input.electives) {
         for (const teacherId of elective.eligibleTeacherIds) {
             if (!teacherIds.has(teacherId)) {
